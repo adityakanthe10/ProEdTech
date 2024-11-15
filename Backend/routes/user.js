@@ -6,9 +6,13 @@ const { User, Course } = require("../db");
 const app = express();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET1 } = require("../config");
-app.use(express.json());
+const userRouter = express.Router();
+
+userRouter.use(express.json());
 // User Routes
-app.post("/signup", async (req, res) => {
+
+// user signup
+userRouter.post("/signup", async (req, res) => {
   // Implement user signup logic
   const username = req.headers.username;
   const password = req.headers.password;
@@ -28,7 +32,8 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/signin", async (req, res) => {
+// endpoint to get user signin
+userRouter.post("/signin", async (req, res) => {
   const { username, password } = req.body;
   try {
     if (!username || !password) {
@@ -49,7 +54,8 @@ app.post("/signin", async (req, res) => {
   }
 });
 
-app.get("/courses", async (req, res) => {
+// endpoint to get users courses
+userRouter.get("/courses", async (req, res) => {
   // Implement fetching all courses logic
   // Implement listing all courses logic
   const token = req.headers.authorization;
@@ -66,9 +72,8 @@ app.get("/courses", async (req, res) => {
   try {
     const existingUser = await User.findOne({ username });
     if (!existingUser) {
-      res.statue(404).json({ msg: "User does not exists" });
+      res.status(404).json({ msg: "User does not exists" });
     }
-
     const allCourses = await Course.find({});
     const formattedCourses = allCourses.map((course) => ({
       id: course._id,
@@ -85,7 +90,8 @@ app.get("/courses", async (req, res) => {
   }
 });
 
-app.post("/courses/:courseId", userMiddleware, async (req, res) => {
+// endpoint to purchase a course
+userRouter.post("/courses/:courseId", userMiddleware, async (req, res) => {
   // Implement course purchase logic
   // const authorization = req.headers.authorization;
   const courseId = req.params.courseId;
@@ -114,7 +120,9 @@ app.post("/courses/:courseId", userMiddleware, async (req, res) => {
     });
   }
 });
-app.get("/purchasedCourses", userMiddleware, async (req, res) => {
+
+// endpoint to get all the details of the purchasedcourse
+userRouter.get("/purchasedCourses", userMiddleware, async (req, res) => {
   // Implement fetching purchased courses logic
   const username = req.admin;
   try {
@@ -131,5 +139,5 @@ app.get("/purchasedCourses", userMiddleware, async (req, res) => {
   }
 });
 
-app.listen(3001);
-// module.exports = app;
+// userRouter.listen(3001);
+module.exports = userRouter;

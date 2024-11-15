@@ -4,13 +4,12 @@ const adminMiddleware = require("../middleware/admin");
 const { Admin } = require("../db/index");
 const { Course } = require("../db/index");
 const jwt = require("jsonwebtoken");
+const adminRouter = express.Router();
 
 const { JWT_SECRET } = require("../config");
 
-const app = express();
-// Admin Routes
-app.use(express.json());
-app.post("/signup", async (req, res) => {
+// endpoint to create a signup
+adminRouter.post("/signup", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   try {
@@ -34,7 +33,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/signin", async (req, res) => {
+adminRouter.post("/signin", async (req, res) => {
   // Implement admin signup logic
   const { username, password } = req.body;
   try {
@@ -56,7 +55,7 @@ app.post("/signin", async (req, res) => {
   }
 });
 
-app.post("/courses", adminMiddleware, async (req, res) => {
+adminRouter.post("/courses", adminMiddleware, async (req, res) => {
   const authorization = req.headers.authorization;
   const title = req.body.title;
   const course_description = req.body.course_description;
@@ -80,7 +79,7 @@ app.post("/courses", adminMiddleware, async (req, res) => {
   }
 });
 
-app.get("/courses", adminMiddleware, async (req, res) => {
+adminRouter.get("/courses", adminMiddleware, async (req, res) => {
   const username = req.admin;
   const retrieveCourses = await Course.find({
     username: username,
@@ -97,6 +96,6 @@ app.get("/courses", adminMiddleware, async (req, res) => {
   });
 });
 
-app.listen(3000);
+// adminRouter.listen(3000);
 
-// module.exports = router;
+module.exports = adminRouter;

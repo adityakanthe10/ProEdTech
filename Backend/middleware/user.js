@@ -1,6 +1,7 @@
 const { User } = require("../db");
 const { JWT_SECRET1 } = require("../config");
 const jwt = require("jsonwebtoken");
+
 function userMiddleware(req, res, next) {
   // Implement admin auth logic
   // You need to check the headers and validate the admin from the admin DB. Check readme for the exact headers to be expected
